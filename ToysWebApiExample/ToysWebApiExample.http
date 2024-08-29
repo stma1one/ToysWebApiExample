@@ -1,0 +1,6 @@
+@ToysWebApiExample_HostAddress = http://localhost:5153
+
+POST {{ToysWebApiExample_HostAddress}}/Api/ToysApi/DeleteToy/2
+Accept: application/json
+
+###
