@@ -173,6 +173,11 @@ namespace ToysWebApiExample.Repository
                 toy.Image= imageName;
         return true;
         }
+
+        public List<ToyTypes> GetToyTypes()
+        {
+            return toyTypes;
+        }
         
     }
 }

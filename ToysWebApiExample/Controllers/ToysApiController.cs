@@ -131,5 +131,10 @@ namespace ToysWebApiExample.Controllers
 
             return ApiResponse<bool>.Ok();
         }
+
+        public ApiResponse<List<ToyTypes>> GetToyTypes()
+        {
+            return ApiResponse<List<ToyTypes>>.Ok(toyRepo.GetToyTypes());
+        }
     }
 }
