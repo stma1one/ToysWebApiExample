@@ -31,11 +31,11 @@ namespace ToysWebApiExample.Controllers
         }
         // POST api/login
         [HttpPost("login")]
-        public ApiResponse<User> Login([FromBody] DTO.LoginInfo loginDto)
+        public ApiResponse<User> Login([FromBody] DTO.LoginInfo? loginDto)
         {
             try
             {
-                HttpContext.Session.Clear(); //Logout any previous login attempt
+                HttpContext.Session?.Clear(); //Logout any previous login attempt
 
                 //Get model user class from DB with matching email. 
 
@@ -48,7 +48,7 @@ namespace ToysWebApiExample.Controllers
                 }
 
                 //Login suceed! now mark login in session memory!
-                HttpContext.Session.SetString("loggedInUser", user.Email);
+                HttpContext.Session?.SetString("loggedInUser", user.Email);
 
                 return ApiResponse<User>.Ok(user);
             }
@@ -99,7 +99,7 @@ namespace ToysWebApiExample.Controllers
             // Define allowed file extensions for images
             string[] allowedExtensions = { ".jpg", ".jpeg", ".png" };
             // Specify the directory where images will be saved
-            string uploadDirectory = Path.Combine("wwwroot", @"Images/{toyid}");
+            string uploadDirectory = Path.Combine("wwwroot", @$"Images/ToyImages/{toyId}");
             // Check if a file was actually uploaded
             if (photo == null || photo.Length == 0)
             {
@@ -132,6 +132,7 @@ namespace ToysWebApiExample.Controllers
             return ApiResponse<bool>.Ok();
         }
 
+        [HttpGet("ToyTypes")]
         public ApiResponse<List<ToyTypes>> GetToyTypes()
         {
             return ApiResponse<List<ToyTypes>>.Ok(toyRepo.GetToyTypes());
