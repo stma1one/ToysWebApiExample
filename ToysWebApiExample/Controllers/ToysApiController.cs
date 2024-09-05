@@ -99,7 +99,7 @@ namespace ToysWebApiExample.Controllers
             // Define allowed file extensions for images
             string[] allowedExtensions = { ".jpg", ".jpeg", ".png" };
             // Specify the directory where images will be saved
-            string uploadDirectory = Path.Combine("wwwroot", "Images");
+            string uploadDirectory = Path.Combine("wwwroot", @"Images/{toyid}");
             // Check if a file was actually uploaded
             if (photo == null || photo.Length == 0)
             {
