@@ -22,16 +22,16 @@ namespace ToysWebApiExample.Controllers
         }
         // POST api/Register
         [HttpPost("Register")]
-        public ApiResponse<bool> Register(UserDTO user)
+        public IActionResult Register(UserDTO user)
         {
             User newUser=new User() { Email=user.Email, Name=user.Name, Password=user.Password};
             if(!userRepo.AddUser(newUser))
-            return ApiResponse<bool>.Error("Unable to Add user",(int)HttpStatusCode.Conflict);    
-            return ApiResponse<bool>.Ok(true);
+            return Conflict("Unable to Add user");    
+            return Ok(true);
         }
         // POST api/login
         [HttpPost("login")]
-        public ApiResponse<User> Login([FromBody] DTO.LoginInfo? loginDto)
+        public IActionResult Login([FromBody] DTO.LoginInfo? loginDto)
         {
             try
             {
@@ -44,57 +44,71 @@ namespace ToysWebApiExample.Controllers
                 //Check if user exist for this email and if password match, if not return Access Denied (Error 403) 
                 if (user == null || user.Password != loginDto.Password)
                 {
-                    return ApiResponse<User>.Error("Login Failed UserName or Password Incorrect", (int)HttpStatusCode.Unauthorized);
+                    return Unauthorized("Login Failed UserName or Password Incorrect");
                 }
 
                 //Login suceed! now mark login in session memory!
                 HttpContext.Session?.SetString("loggedInUser", user.Email);
 
-                return ApiResponse<User>.Ok(user);
+                return Ok(true);
             }
             catch (Exception ex)
             {
-                return ApiResponse<User>.Error(ex.Message, (int)HttpStatusCode.BadRequest);
+                return BadRequest(ex.Message);
             }
 
         }
 
         // Get api/toys
         [HttpGet(@"Toys/{typeId}")]
-        public ApiResponse<List<Toy>> GetToysByType(int typeId=0)
+        public IActionResult GetToysByType(int typeId=0)
         {
             var user = HttpContext.Session.Get("loggedInUser");
             if (user == null)
-                return ApiResponse<List<Toy>>.Error("You must first LOGIN to the Application", (int)HttpStatusCode.Unauthorized);
-            return ApiResponse<List<Toy>>.Ok(toyRepo.GetToyByType(typeId));
+                return Unauthorized("You must first LOGIN to the Application");
+            var result = toyRepo.GetToyByType(typeId);
+            if (result.Count == 0)
+                return NoContent();
+            return Ok(result);
         }
 
         // POST api/AddToy
         [HttpPost("Toys")]
-        public ApiResponse<Toy> AddToy([FromBody] Toy toy)
+        public IActionResult AddToy([FromBody] Toy toy)
         {
             var user = HttpContext.Session.Get("loggedInUser");
             if (user == null)
-                return ApiResponse<Toy>.Error("You must first LOGIN to the Application", (int)HttpStatusCode.Unauthorized);
-                
-            if(!toyRepo.AddToy(toy))
-                return ApiResponse<Toy>.Error("Unable to Add toy", (int)HttpStatusCode.NotModified);
-            return ApiResponse<Toy>.Ok(toy);
+                return Unauthorized("You must first LOGIN to the Application");
+            try
+            {
+                if (!toyRepo.AddToy(toy))
+                    return BadRequest("Unable to Add Toy");
+
+                return Ok(toy);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);  
+            }
         }
-         // POST api/AddToy
+         // Delete api/AddToy
         [HttpDelete("Toys/{toyId}")]
-        public ApiResponse<Toy> DeleteToy(int toyId)
+        public IActionResult DeleteToy(int toyId)
         {
             var user = HttpContext.Session.Get("loggedInUser");
             if (user == null)
-                return ApiResponse<Toy>.Error("You must first LOGIN to the Application", (int)HttpStatusCode.Unauthorized);
-                
-            if(!toyRepo.DeleteToy(toyId))
-                return ApiResponse<Toy>.Error("Unable to Delete toy", (int)HttpStatusCode.NoContent);
-            return ApiResponse<Toy>.Ok();
+                return Unauthorized("You must first LOGIN to the Application");
+            try
+            {
+                if (!toyRepo.DeleteToy(toyId))
+                    return BadRequest("Unable to Delete toy");
+                return Ok();
+            }
+            catch (Exception ex) { return BadRequest(ex.Message); }
         }
+        //Put Service
         [HttpPut("Toys/Image/{toyId}")]
-        public async Task<ApiResponse<bool>> UploadToyImageAsync(int toyId,IFormFile photo)
+        public async Task<IActionResult> UploadToyImageAsync(int toyId,IFormFile photo)
         {
             // Define allowed file extensions for images
             string[] allowedExtensions = { ".jpg", ".jpeg", ".png" };
@@ -103,7 +117,7 @@ namespace ToysWebApiExample.Controllers
             // Check if a file was actually uploaded
             if (photo == null || photo.Length == 0)
             {
-                return ApiResponse<bool>.Error("No file uploaded.",(int)HttpStatusCode.BadRequest );
+                return BadRequest("No file uploaded.");
             }
 
             // Get the file extension and convert to lowercase for consistency
@@ -111,7 +125,7 @@ namespace ToysWebApiExample.Controllers
             // Validate file extension against our allowed list
             if (!allowedExtensions.Contains(fileExtension))
             {
-                return ApiResponse<bool>.Error("Invalid file type. Only jpg, jpeg, and png are allowed.",(int)HttpStatusCode.BadRequest);
+                return BadRequest("Invalid file type. Only jpg, jpeg, and png are allowed.");
             }
            //create directory if not exists
             if (!Directory.Exists(uploadDirectory))
@@ -129,13 +143,13 @@ namespace ToysWebApiExample.Controllers
             }
             toyRepo.UpdateImage(toyId, fileName);
 
-            return ApiResponse<bool>.Ok();
+            return Ok();
         }
-
+        //Get Types
         [HttpGet("ToyTypes")]
-        public ApiResponse<List<ToyTypes>> GetToyTypes()
+        public IActionResult GetToyTypes()
         {
-            return ApiResponse<List<ToyTypes>>.Ok(toyRepo.GetToyTypes());
+            return Ok(toyRepo.GetToyTypes());
         }
     }
 }
