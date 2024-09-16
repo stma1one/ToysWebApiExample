@@ -50,7 +50,7 @@ namespace ToysWebApiExample.Controllers
                 //Login suceed! now mark login in session memory!
                 HttpContext.Session?.SetString("loggedInUser", user.Email);
 
-                return Ok(true);
+                return Ok(user);
             }
             catch (Exception ex)
             {
