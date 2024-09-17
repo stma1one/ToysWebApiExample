@@ -63,7 +63,7 @@ namespace ToysWebApiExample.Controllers
         [HttpGet(@"Toys/{typeId}")]
         public IActionResult GetToysByType(int typeId=0)
         {
-            var user = HttpContext.Session.Get("loggedInUser");
+            var user = HttpContext.Session.GetString("loggedInUser");
             if (user == null)
                 return Unauthorized("You must first LOGIN to the Application");
             var result = toyRepo.GetToyByType(typeId);
@@ -76,7 +76,7 @@ namespace ToysWebApiExample.Controllers
         [HttpPost("Toys")]
         public IActionResult AddToy([FromBody] Toy toy)
         {
-            var user = HttpContext.Session.Get("loggedInUser");
+            var user = HttpContext.Session.GetString("loggedInUser");
             if (user == null)
                 return Unauthorized("You must first LOGIN to the Application");
             try
@@ -95,7 +95,7 @@ namespace ToysWebApiExample.Controllers
         [HttpDelete("Toys/{toyId}")]
         public IActionResult DeleteToy(int toyId)
         {
-            var user = HttpContext.Session.Get("loggedInUser");
+            var user = HttpContext.Session.GetString("loggedInUser");
             if (user == null)
                 return Unauthorized("You must first LOGIN to the Application");
             try
