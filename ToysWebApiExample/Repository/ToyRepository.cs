@@ -52,7 +52,7 @@ namespace ToysWebApiExample.Repository
                 new Toy()
                 {
                     Id=++id,
-                    Image="chuky.jpg",
+                    Image=@$"{Environment.GetEnvironmentVariable("VS_TUNNEL_URL")}/Images/chuky.jpg",
                     IsSecondHand=false,
                     Name="צאקי",
                     Price=200,
@@ -61,7 +61,7 @@ namespace ToysWebApiExample.Repository
                 new Toy()
                 {
                     Id=++id,
-                    Image="puppet.jpeg",
+                    Image=@$"{Environment.GetEnvironmentVariable("VS_TUNNEL_URL")}/Images/puppet.jpeg",
                     IsSecondHand=false,
                     Name="רובי",
                     Price=250,
@@ -70,7 +70,7 @@ namespace ToysWebApiExample.Repository
                 new Toy()
                 {
                     Id=++id,
-                    Image="puzzle.jpeg",
+                    Image=@$"{Environment.GetEnvironmentVariable("VS_TUNNEL_URL")}/Images/puzzle.jpeg",
                     IsSecondHand=false,
                     Name="גן חיות",
                     Price=250,
@@ -79,7 +79,7 @@ namespace ToysWebApiExample.Repository
                 new Toy()
                 {
                     Id=++id,
-                    Image="thinkgame.jpeg",
+                    Image=@$"{Environment.GetEnvironmentVariable("VS_TUNNEL_URL")}/Images/thinkgame.jpeg",
                     IsSecondHand=true,
                     Name="מבוכים ודרקונים",
                     Price=250,
@@ -142,7 +142,7 @@ namespace ToysWebApiExample.Repository
             if (toys != null)
             {
                 toy.Id = ++id;
-                toy.Image = "default.png";
+                toy.Image = @$"{Environment.GetEnvironmentVariable("VS_TUNNEL_URL")}Images/default.png";
                 toys.Add(toy);
                 return true;
             }

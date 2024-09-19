@@ -141,6 +141,7 @@ namespace ToysWebApiExample.Controllers
             {
                 await photo.CopyToAsync(stream);
             }
+            string fullPath= @$"{Environment.GetEnvironmentVariable("VS_TUNNEL_URL")}/Images/ToyImages/{toyId}/{fileName}";
             toyRepo.UpdateImage(toyId, fileName);
 
             return Ok();
