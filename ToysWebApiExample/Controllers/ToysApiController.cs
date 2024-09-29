@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using System.Runtime.CompilerServices;
 using ToysWebApiExample.DTOS;
 using ToysWebApiExample.Models;
 using ToysWebApiExample.Repository;
@@ -14,9 +15,11 @@ namespace ToysWebApiExample.Controllers
     {
         private ToyRepository toyRepo;
         private UserRepository userRepo;
+        ILogger<ToyRepository> logger;
 
-        public ToysApiController(ToyRepository toyRepo, UserRepository userRepo)
+        public ToysApiController(ToyRepository toyRepo, UserRepository userRepo, ILogger<ToyRepository> logger)
         {
+            this.logger = logger;
             this.toyRepo = toyRepo;
             this.userRepo = userRepo;
         }
@@ -133,7 +136,7 @@ namespace ToysWebApiExample.Controllers
                 Directory.CreateDirectory(uploadDirectory);
             }
             // Construct the file name using the specified format
-            var fileName = $"{toyId}product{fileExtension}";
+            var fileName = $"Toy_{toyId}{fileExtension}";
             var filePath = Path.Combine(uploadDirectory, fileName);
 
             // Save the file to the specified path
@@ -142,7 +145,7 @@ namespace ToysWebApiExample.Controllers
                 await photo.CopyToAsync(stream);
             }
             string fullPath= @$"{Environment.GetEnvironmentVariable("VS_TUNNEL_URL")}/Images/ToyImages/{toyId}/{fileName}";
-            toyRepo.UpdateImage(toyId, fileName);
+            toyRepo.UpdateImage(toyId, fullPath);
 
             return Ok();
         }
@@ -150,6 +153,7 @@ namespace ToysWebApiExample.Controllers
         [HttpGet("ToyTypes")]
         public IActionResult GetToyTypes()
         {
+             logger.LogInformation($"Get Toys{DateTime.Now}", DateTime.Now);
             return Ok(toyRepo.GetToyTypes());
         }
     }

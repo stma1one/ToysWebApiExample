@@ -21,6 +21,8 @@ namespace ToysWebApiExample
 
             #endregion 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            builder.Logging.ClearProviders();
+            builder.Logging.AddConsole();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
@@ -37,6 +39,7 @@ namespace ToysWebApiExample
             #endregion
 
             var app = builder.Build();
+            
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
